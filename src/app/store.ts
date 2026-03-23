@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { getReplayWorkerClient } from '../lib/parser/replayWorkerClient';
-import { listCachedSessions, cacheReplaySession, exportReplaySession } from '../lib/storage/replayCache';
+import { listCachedSessions, cacheReplaySession } from '../lib/storage/replayCache';
 import { replayDb, type StoredReplaySession } from '../lib/storage/db';
 import type { CameraMode, NormalizedReplay, ReplayEventType } from '../types/replay';
 
@@ -38,7 +38,6 @@ interface ReplayForgeState {
   parseFile: (file: File) => Promise<void>;
   openSession: (replayHash: string) => Promise<void>;
   deleteSession: (replayHash: string) => Promise<void>;
-  exportCurrentReplay: () => void;
   setReplay: (replay: NormalizedReplay) => void;
   seek: (time: number) => void;
   step: (delta: number) => void;
@@ -116,12 +115,6 @@ export const useReplayForgeStore = create<ReplayForgeState>((set, get) => ({
       sessions,
       replay: currentReplay?.replayHash === replayHash ? null : currentReplay
     });
-  },
-  exportCurrentReplay: () => {
-    const replay = get().replay;
-    if (replay) {
-      exportReplaySession(replay);
-    }
   },
   setReplay: (replay) => applyReplay(replay, set),
   seek: (time) => {

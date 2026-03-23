@@ -38,7 +38,6 @@ export const HomePage = () => {
     parseFile,
     openSession,
     deleteSession,
-    exportCurrentReplay,
     seek,
     togglePlayback,
     setPlaybackSpeed,
@@ -53,19 +52,13 @@ export const HomePage = () => {
       <main className="app-shell">
         <header className="hero">
           <div>
-            <p className="eyebrow">RLStatLab</p>
-            <h1>Rocket League replay analysis</h1>
-            <p>
-              Upload a local `.replay`, parse it in a Web Worker, cache normalized sessions in IndexedDB,
-              and inspect custom analytics, 3D playback, timelines, and replay-derived player metrics without a backend.
-            </p>
+            <h1>RLStatLab</h1>
           </div>
         </header>
 
         <UploadPanel
           sessions={sessions}
           onFileSelected={parseFile}
-          onExport={exportCurrentReplay}
           onOpenSession={openSession}
           onDeleteSession={deleteSession}
           error={error}

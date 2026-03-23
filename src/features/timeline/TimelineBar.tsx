@@ -2,6 +2,8 @@ import { formatClock } from '../../lib/utils/format';
 import { Panel } from '../../components/Panel';
 import type { NormalizedReplay, ReplayEventType } from '../../types/replay';
 
+const timelineFilterTypes: ReplayEventType[] = ['goal', 'shot', 'save', 'demo', 'bump', 'boost', 'kickoff'];
+
 const markerColor: Record<ReplayEventType, string> = {
   goal: '#ffe082',
   shot: '#91f2de',
@@ -31,7 +33,9 @@ export const TimelineBar = ({
   onSeek,
   onToggleFilter
 }: TimelineBarProps) => {
-  const visibleEvents = replay.timeline.filter((event) => filters[event.type]);
+  const visibleEvents = replay.timeline.filter(
+    (event) => timelineFilterTypes.includes(event.type) && filters[event.type],
+  );
   const duration = replay.meta.durationSeconds;
 
   return (
@@ -70,7 +74,7 @@ export const TimelineBar = ({
         ))}
       </div>
       <div className="timeline-panel__filters">
-        {(Object.keys(filters) as ReplayEventType[]).map((eventType) => (
+        {timelineFilterTypes.map((eventType) => (
           <button
             key={eventType}
             type="button"
@@ -86,4 +90,3 @@ export const TimelineBar = ({
     </Panel>
   );
 };
-

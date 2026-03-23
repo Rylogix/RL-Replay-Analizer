@@ -35,10 +35,6 @@ export const AnalyticsPanel = ({
 
   return (
     <Panel title="Advanced Analytics" subtitle={`Compact replay-derived scoring for ${player.name}`}>
-      <p className="muted analytics-summary">
-        These are custom replay-derived metrics, not official Rocket League stats. Scores are shown as a compact
-        systems-style progress panel.
-      </p>
       <div className="progress-stat-list">
         {cards.map((score, index) => (
           <article
@@ -61,7 +57,6 @@ export const AnalyticsPanel = ({
                 <strong>{score.label}</strong>
                 <div className="progress-stat__meta">
                   <SupportBadge level={replay.derived.formulas[index]?.supportLevel ?? 'derived'} />
-                  <span>{score.rationale}</span>
                 </div>
               </div>
               <div className="progress-stat__track" aria-hidden="true">

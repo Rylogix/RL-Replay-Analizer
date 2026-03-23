@@ -6,7 +6,6 @@ import { Panel } from '../../components/Panel';
 interface UploadPanelProps {
   sessions: StoredReplaySession[];
   onFileSelected: (file: File) => void;
-  onExport: () => void;
   onOpenSession: (replayHash: string) => void;
   onDeleteSession: (replayHash: string) => void;
   error: string | null;
@@ -15,7 +14,6 @@ interface UploadPanelProps {
 export const UploadPanel = ({
   sessions,
   onFileSelected,
-  onExport,
   onOpenSession,
   onDeleteSession,
   error,
@@ -23,15 +21,11 @@ export const UploadPanel = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
-    <Panel
-      title="RLStatLab"
-      action={
-        <button type="button" className="ghost-button" onClick={onExport}>
-          Export JSON
-        </button>
-      }
-      className="upload-panel"
-    >
+    <Panel className="upload-panel">
+      <div className="upload-panel__howto">
+        <strong>Find your `.replay` files:</strong>
+        <span>`Documents/My Games/Rocket League/TAGame/Demos` or `DemosEpic`</span>
+      </div>
       <div className="upload-panel__cta">
         <button type="button" className="primary-button" onClick={() => inputRef.current?.click()}>
           Upload `.replay` or normalized `.json`

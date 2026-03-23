@@ -85,45 +85,7 @@ export const buildTimelineEvents = (replay: NormalizedReplay): TimelineEvent[] =
     supportLevel: replay.support['events.boostPickups'] ?? 'inferred'
   }));
 
-  const aerials = replay.touches
-    .filter((touch) => touch.aerial)
-    .map<TimelineEvent>((touch) => ({
-      id: `aerial-${touch.id}`,
-      type: 'aerial',
-      time: touch.time,
-      title: 'Aerial Touch',
-      description: `${replay.players.find((entry) => entry.id === touch.playerId)?.name ?? 'Unknown'} made an aerial touch`,
-      playerId: touch.playerId,
-      teamId: touch.teamId,
-      importance: 0.4,
-      supportLevel: replay.support['events.touches'] ?? 'derived'
-    }));
-
-  const possessions = replay.possessions.map<TimelineEvent>((segment) => ({
-    id: segment.id,
-    type: 'possession',
-    time: segment.startTime,
-    title: 'Possession Window',
-    description: `${replay.teams.find((entry) => entry.id === segment.teamId)?.name ?? 'Unknown'} maintained possession for ${(segment.endTime - segment.startTime).toFixed(1)}s`,
-    playerId: segment.playerId,
-    teamId: segment.teamId,
-    importance: 0.45,
-    supportLevel: replay.support['events.possessions'] ?? 'inferred'
-  }));
-
-  const pressure = replay.pressureWindows.map<TimelineEvent>((window) => ({
-    id: window.id,
-    type: 'pressure',
-    time: window.startTime,
-    title: 'Pressure Window',
-    description: `${replay.teams.find((entry) => entry.id === window.teamId)?.name ?? 'Unknown'} pressure: ${window.reason}`,
-    teamId: window.teamId,
-    importance: 0.6,
-    supportLevel: replay.support['events.pressureWindows'] ?? 'inferred'
-  }));
-
-  return [...kickoffEvents, ...goals, ...shots, ...saves, ...demos, ...bumps, ...boosts, ...aerials, ...possessions, ...pressure].sort(
+  return [...kickoffEvents, ...goals, ...shots, ...saves, ...demos, ...bumps, ...boosts].sort(
     (left, right) => left.time - right.time,
   );
 };
-

@@ -352,7 +352,7 @@ export const ReplayViewer3D = ({
   return (
     <Panel
       title="3D Replay Viewer"
-      subtitle={`Ball-follow replay viewport at ${formatClock(currentTime)}`}
+      subtitle={formatClock(currentTime)}
       className="viewer-panel"
     >
       <div className="viewer-toolbar viewer-toolbar--stacked">
@@ -379,7 +379,7 @@ export const ReplayViewer3D = ({
       </div>
 
       <div className="viewer-stage">
-        <Canvas camera={{ position: [0, 4.5, -6.5], fov: 44 }} shadows>
+        <Canvas camera={{ position: [0, 4.5, -6.5], fov: 62 }} shadows>
           <FieldScene replay={replay} currentTime={currentTime} selectedPlayerId={selectedPlayerId} zoom={zoom} />
         </Canvas>
       </div>
