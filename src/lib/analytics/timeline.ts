@@ -73,19 +73,7 @@ export const buildTimelineEvents = (replay: NormalizedReplay): TimelineEvent[] =
     supportLevel: replay.support['events.bumps'] ?? 'inferred'
   }));
 
-  const boosts = replay.boostPickups.map<TimelineEvent>((pickup) => ({
-    id: pickup.id,
-    type: 'boost',
-    time: pickup.time,
-    title: 'Boost Pickup',
-    description: `${replay.players.find((entry) => entry.id === pickup.playerId)?.name ?? 'Unknown'} collected ${pickup.isLarge ? 'full' : 'small'} boost`,
-    playerId: pickup.playerId,
-    teamId: pickup.teamId,
-    importance: pickup.isLarge ? 0.55 : 0.35,
-    supportLevel: replay.support['events.boostPickups'] ?? 'inferred'
-  }));
-
-  return [...kickoffEvents, ...goals, ...shots, ...saves, ...demos, ...bumps, ...boosts].sort(
+  return [...kickoffEvents, ...goals, ...shots, ...saves, ...demos, ...bumps].sort(
     (left, right) => left.time - right.time,
   );
 };

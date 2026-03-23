@@ -446,11 +446,12 @@ select:hover {
 .viewer-stage {
   position: relative;
   width: 100%;
-  height: min(64vh, 760px);
+  height: clamp(420px, 56vh, 700px);
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: #090b0d;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 20px 40px rgba(0, 0, 0, 0.24);
 }
 
 .viewer-stage canvas {
@@ -471,6 +472,10 @@ select:hover {
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.04em;
+}
+
+.viewer-speed-button {
+  min-width: 128px;
 }
 
 .viewer-toolbar--stacked {
@@ -527,7 +532,59 @@ select:hover {
 .heatmap-toolbar input,
 .viewer-zoom input {
   width: 100%;
-  accent-color: var(--accent-blue);
+}
+
+.slider {
+  --range-progress: 0%;
+  appearance: none;
+  width: 100%;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(90deg, rgba(34, 230, 168, 0.9), rgba(77, 163, 255, 0.88)) 0 / var(--range-progress) 100% no-repeat,
+    linear-gradient(180deg, #1a1f24, #12161a);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.slider::-webkit-slider-runnable-track {
+  appearance: none;
+  height: 14px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -2px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  background: #f3f4f6;
+  box-shadow: 0 0 0 4px rgba(77, 163, 255, 0.16), 0 0 16px rgba(77, 163, 255, 0.18);
+}
+
+.slider::-moz-range-track {
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #1a1f24, #12161a);
+}
+
+.slider::-moz-range-progress {
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(34, 230, 168, 0.9), rgba(77, 163, 255, 0.88));
+}
+
+.slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  background: #f3f4f6;
+  box-shadow: 0 0 0 4px rgba(77, 163, 255, 0.16), 0 0 16px rgba(77, 163, 255, 0.18);
 }
 
 .tabs {
@@ -674,36 +731,59 @@ select:hover {
 
 .timeline-panel__markers {
   position: relative;
-  height: 50px;
-  margin: 12px 0 10px;
+  height: 58px;
+  margin: 14px 0 12px;
 }
 
 .timeline-panel__rail,
 .timeline-panel__cursor {
   position: absolute;
-  top: 18px;
-  height: 4px;
+  top: 21px;
   border-radius: 999px;
 }
 
 .timeline-panel__rail {
   width: 100%;
-  background: rgba(255, 255, 255, 0.08);
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, #161a1f, #101419);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.timeline-panel__rail-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(34, 230, 168, 0.7), rgba(77, 163, 255, 0.86));
+  box-shadow: 0 0 18px rgba(77, 163, 255, 0.18);
 }
 
 .timeline-panel__cursor {
-  width: 2px;
-  background: var(--accent-green);
-  box-shadow: var(--glow-green);
+  width: 3px;
+  height: 18px;
+  transform: translateX(-50%);
+  background: #f3f4f6;
+  box-shadow: 0 0 14px rgba(77, 163, 255, 0.28);
 }
 
 .timeline-panel__marker {
   position: absolute;
-  width: 11px;
-  height: 11px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  min-width: 10px;
+  min-height: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
+  transform: translate(-50%, -50%);
+}
+
+.timeline-panel__marker::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 2px);
+  width: 1px;
+  height: 8px;
   transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .timeline-panel__swatch {

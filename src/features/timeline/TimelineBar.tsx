@@ -2,7 +2,7 @@ import { formatClock } from '../../lib/utils/format';
 import { Panel } from '../../components/Panel';
 import type { NormalizedReplay, ReplayEventType } from '../../types/replay';
 
-const timelineFilterTypes: ReplayEventType[] = ['goal', 'shot', 'save', 'demo', 'bump', 'boost', 'kickoff'];
+const timelineFilterTypes: ReplayEventType[] = ['goal', 'shot', 'save', 'demo', 'bump', 'kickoff'];
 
 const markerColor: Record<ReplayEventType, string> = {
   goal: '#ffe082',
@@ -15,7 +15,7 @@ const markerColor: Record<ReplayEventType, string> = {
   kickoff: '#ffffff',
   possession: '#7ed6ff',
   pressure: '#ffb36a',
-  aerial: '#95f6ff'
+  aerial: '#95f6ff',
 };
 
 interface TimelineBarProps {
@@ -31,17 +31,20 @@ export const TimelineBar = ({
   currentTime,
   filters,
   onSeek,
-  onToggleFilter
+  onToggleFilter,
 }: TimelineBarProps) => {
   const visibleEvents = replay.timeline.filter(
     (event) => timelineFilterTypes.includes(event.type) && filters[event.type],
   );
   const duration = replay.meta.durationSeconds;
+  const scrubberProgress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <Panel title="Timeline" subtitle="Scrub, filter, cluster, and jump between replay events" className="timeline-panel">
       <div className="timeline-panel__scrubber">
         <input
+          className="slider slider--timeline"
+          style={{ ['--range-progress' as string]: `${scrubberProgress}%` }}
           type="range"
           min={0}
           max={duration}
@@ -55,9 +58,12 @@ export const TimelineBar = ({
           <span>{formatClock(duration)}</span>
         </div>
       </div>
+
       <div className="timeline-panel__markers">
-        <div className="timeline-panel__rail" />
-        <div className="timeline-panel__cursor" style={{ left: `${(currentTime / duration) * 100}%` }} />
+        <div className="timeline-panel__rail">
+          <div className="timeline-panel__rail-fill" style={{ width: `${scrubberProgress}%` }} />
+        </div>
+        <div className="timeline-panel__cursor" style={{ left: `${scrubberProgress}%` }} />
         {visibleEvents.map((event, index) => (
           <button
             key={event.id}
@@ -67,12 +73,16 @@ export const TimelineBar = ({
             style={{
               left: `${(event.time / duration) * 100}%`,
               backgroundColor: markerColor[event.type],
-              top: `${12 + (index % 3) * 14}px`
+              top: `${12 + (index % 3) * 14}px`,
+              width: `${10 + event.importance * 8}px`,
+              height: `${10 + event.importance * 8}px`,
+              boxShadow: `0 0 0 1px rgba(255,255,255,0.12), 0 0 18px ${markerColor[event.type]}55`,
             }}
             onClick={() => onSeek(event.time)}
           />
         ))}
       </div>
+
       <div className="timeline-panel__filters">
         {timelineFilterTypes.map((eventType) => (
           <button
@@ -86,6 +96,7 @@ export const TimelineBar = ({
           </button>
         ))}
       </div>
+
       <p className="muted">Keyboard shortcuts: `Space` play/pause, `←/→` step 1 second, `Shift+←/→` step 5 seconds, `[` and `]` change speed.</p>
     </Panel>
   );
