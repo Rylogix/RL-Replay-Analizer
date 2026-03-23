@@ -1,6 +1,6 @@
 # ReplayForge Architecture Plan
 
-## Goals
+## Goalss
 
 - deploy as a static site on GitHub Pages
 - keep parsing, normalization, analytics, rendering, and persistence in the browser
