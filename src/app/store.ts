@@ -4,7 +4,7 @@ import { listCachedSessions, cacheReplaySession, exportReplaySession } from '../
 import { replayDb, type StoredReplaySession } from '../lib/storage/db';
 import type { CameraMode, NormalizedReplay, ReplayEventType } from '../types/replay';
 
-export type AppTab = 'overview' | 'players' | 'analytics' | 'heatmaps' | 'raw';
+export type AppTab = 'overview' | 'players' | 'analytics';
 
 const defaultEventFilters: Record<ReplayEventType, boolean> = {
   goal: true,
@@ -69,7 +69,7 @@ export const useReplayForgeStore = create<ReplayForgeState>((set, get) => ({
   sessions: [],
   selectedTab: 'overview',
   selectedPlayerId: null,
-  cameraMode: 'free',
+  cameraMode: 'followBall',
   currentTime: 0,
   isPlaying: false,
   playbackSpeed: 1,

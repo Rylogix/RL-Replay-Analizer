@@ -1,89 +1,77 @@
-import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import type { CSSProperties } from 'react';
 import { SupportBadge } from '../../components/SupportBadge';
 import { Panel } from '../../components/Panel';
 import { formatMetric } from '../../lib/utils/format';
-import type { NormalizedReplay } from '../../types/replay';
+import type { MetricScoreBreakdown, NormalizedReplay } from '../../types/replay';
+
+const toCards = (replay: NormalizedReplay, selectedPlayerId: string | null) => {
+  const player = replay.players.find((entry) => entry.id === selectedPlayerId) ?? replay.players[0];
+  const metrics = replay.derived.players[player.id];
+
+  const cards: MetricScoreBreakdown[] = [
+    metrics.aerialScore,
+    metrics.movementScore,
+    metrics.positioningScore,
+    metrics.boostManagementScore,
+    metrics.pressureScore,
+    metrics.recoveryScore,
+    metrics.challengeScore,
+    metrics.rotationScore,
+    metrics.shootingScore,
+    metrics.defensiveReliabilityScore,
+  ];
+
+  return { player, cards };
+};
 
 export const AnalyticsPanel = ({
   replay,
-  selectedPlayerId
+  selectedPlayerId,
 }: {
   replay: NormalizedReplay;
   selectedPlayerId: string | null;
 }) => {
-  const player = replay.players.find((entry) => entry.id === selectedPlayerId) ?? replay.players[0];
-  const metrics = replay.derived.players[player.id];
-  const chartData = [
-    { key: 'Aerial', value: metrics.aerialScore.total },
-    { key: 'Movement', value: metrics.movementScore.total },
-    { key: 'Positioning', value: metrics.positioningScore.total },
-    { key: 'Boost', value: metrics.boostManagementScore.total },
-    { key: 'Pressure', value: metrics.pressureScore.total },
-    { key: 'Recovery', value: metrics.recoveryScore.total },
-    { key: 'Challenge', value: metrics.challengeScore.total },
-    { key: 'Rotation', value: metrics.rotationScore.total },
-    { key: 'Shooting', value: metrics.shootingScore.total },
-    { key: 'Defense', value: metrics.defensiveReliabilityScore.total }
-  ];
+  const { player, cards } = toCards(replay, selectedPlayerId);
 
   return (
-    <div className="tab-grid tab-grid--analytics">
-      <Panel title="Advanced Analytics" subtitle={`Custom replay-derived metrics for ${player.name}`}>
-        <div className="chart-shell">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <XAxis dataKey="key" tick={{ fill: '#a9bfcb', fontSize: 12 }} angle={-25} textAnchor="end" height={70} />
-              <YAxis tick={{ fill: '#a9bfcb' }} domain={[0, 100]} />
-              <Tooltip />
-              <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell key={entry.key} fill={index % 2 === 0 ? '#31c4bf' : '#ff9c53'} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Panel>
-      <Panel title="Formula Transparency" subtitle="Each metric is explicitly labeled as custom and replay-derived">
-        <div className="formula-grid">
-          {replay.derived.formulas.map((formula) => (
-            <article key={formula.id} className="formula-card">
-              <div className="formula-card__header">
-                <h3>{formula.title}</h3>
-                <SupportBadge level={formula.supportLevel} />
-              </div>
-              <code>{formula.formula}</code>
-              <p>{formula.rationale}</p>
-              <p className="muted">{formula.inputs.join(' • ')}</p>
-            </article>
-          ))}
-        </div>
-      </Panel>
-      <Panel title="Selected Player Breakdown" subtitle={`${player.name} custom score details`}>
-        <div className="metric-breakdown">
-          {([
-            metrics.aerialScore,
-            metrics.movementScore,
-            metrics.positioningScore,
-            metrics.boostManagementScore,
-            metrics.pressureScore,
-            metrics.recoveryScore,
-            metrics.challengeScore,
-            metrics.rotationScore,
-            metrics.shootingScore,
-            metrics.defensiveReliabilityScore
-          ]).map((score) => (
-            <div key={score.label} className="metric-breakdown__row">
-              <div>
+    <Panel title="Advanced Analytics" subtitle={`Compact replay-derived scoring for ${player.name}`}>
+      <p className="muted analytics-summary">
+        These are custom replay-derived metrics, not official Rocket League stats. Scores are shown as a compact
+        systems-style progress panel.
+      </p>
+      <div className="progress-stat-list">
+        {cards.map((score, index) => (
+          <article
+            key={score.label}
+            className="progress-stat"
+            style={
+              {
+                '--progress-value': `${score.total}%`,
+                '--progress-fill':
+                  index % 3 === 0
+                    ? 'var(--accent-green)'
+                    : index % 3 === 1
+                      ? 'var(--accent-blue)'
+                      : 'var(--accent-purple)',
+              } as CSSProperties
+            }
+          >
+            <div className="progress-stat__main">
+              <div className="progress-stat__label">
                 <strong>{score.label}</strong>
-                <p>{score.rationale}</p>
+                <div className="progress-stat__meta">
+                  <SupportBadge level={replay.derived.formulas[index]?.supportLevel ?? 'derived'} />
+                  <span>{score.rationale}</span>
+                </div>
               </div>
-              <span>{formatMetric(score.total)}</span>
+              <div className="progress-stat__track" aria-hidden="true">
+                <div className="progress-stat__fill" />
+              </div>
+              <strong className="progress-stat__value">{formatMetric(score.total)}</strong>
             </div>
-          ))}
-        </div>
-      </Panel>
-    </div>
+          </article>
+        ))}
+      </div>
+    </Panel>
   );
 };
-

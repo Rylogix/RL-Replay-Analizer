@@ -24,8 +24,7 @@ export const UploadPanel = ({
 
   return (
     <Panel
-      title="ReplayForge"
-      subtitle="Browser-only replay uploads, analytics, and local caching for GitHub Pages"
+      title="RLStatLab"
       action={
         <button type="button" className="ghost-button" onClick={onExport}>
           Export JSON
@@ -54,10 +53,6 @@ export const UploadPanel = ({
       />
 
       <div className="upload-panel__notes">
-        <p>
-          `.replay` parsing runs locally in a Web Worker via a browser-loaded WASM parser. Some advanced event
-          timings are still inferred from replay state and direct summary stats.
-        </p>
         {error ? <p className="upload-panel__error">{error}</p> : null}
       </div>
 
