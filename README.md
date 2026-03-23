@@ -1,21 +1,20 @@
 # ReplayForge
 
-ReplayForge is a static Vite + React + TypeScript dashboard for analyzing Rocket League replay sessions entirely in the browser. It is designed to run on GitHub Pages with no backend, no cloud storage, and no server-side replay processing.
+ReplayForge is a static Vite + React + TypeScript dashboard for analyzing Rocket League replay sessions entirely in the browser. It is built for GitHub Pages: no backend, no cloud storage, no server-side replay processing.
 
 ## What It Includes
 
-- local file upload for `.replay` and normalized `.json`
-- Web Worker pipeline for parsing/import flow
+- local `.replay` and normalized `.json` upload
+- Web Worker parsing and import flow
 - strongly typed normalized replay schemas
 - local analytics and timeline generation
-- IndexedDB session caching
-- React Three Fiber proxy replay viewer
-- event timeline and synchronized event feed
+- IndexedDB replay session caching
+- React Three Fiber replay viewer with free POV, follow-ball, follow-player, and tactical cameras
 - client-side heatmaps
-- raw normalized JSON inspector
+- raw normalized JSON inspection
 - unit tests for normalization, analytics, and timeline logic
 
-## Browser-Only Parser Integration Strategy
+## Browser-Only Parser Integration
 
 ReplayForge already includes:
 
@@ -24,9 +23,8 @@ ReplayForge already includes:
 - a browser-loaded WASM parser integration using `rl-replay-subtr-actor`
 - normalized schema and analytics layers that do not depend on parser internals
 - JSON import/export for offline persistence and debugging
-- a demo replay session for UI development before a browser parser is connected
 
-Current `.replay` support uses a browser-loaded WASM adapter and then normalizes its ndarray/meta output into ReplayForge’s schema. Direct replay summary stats are available, while some timed event layers still rely on transparent inference from frame state.
+Current `.replay` support uses a browser-loaded WASM adapter and normalizes its ndarray/meta output into ReplayForge's schema. Direct replay summary stats are available, while some timed event layers still rely on transparent inference from frame state.
 
 ## Local Development
 
@@ -35,7 +33,7 @@ npm install
 npm run dev
 ```
 
-Then open the local Vite URL, upload a replay or normalized JSON, or use the built-in demo session.
+Then open the local Vite URL and upload a replay or normalized JSON export.
 
 ## Build and Test
 
@@ -48,8 +46,6 @@ The production bundle is emitted to `dist/`.
 
 ## GitHub Pages Deployment
 
-### GitHub Actions
-
 This repository includes `.github/workflows/deploy.yml`.
 
 To deploy:
@@ -61,18 +57,18 @@ To deploy:
 
 The workflow installs dependencies, runs the production build, and publishes the static `dist/` output to GitHub Pages.
 
-### Notes
+## Notes
 
 - `vite.config.ts` uses `base: './'` so relative assets work in GitHub Pages project sites.
 - No backend services are required.
-- IndexedDB persistence stays in the user’s browser on the deployed Pages site.
+- IndexedDB persistence stays in the user's browser on the deployed Pages site.
 
 ## Sample Flow
 
 1. `npm install`
 2. `npm run dev`
 3. Open the Vite dev URL
-4. Click `Load demo session` or import a normalized JSON file
+4. Upload a `.replay` or import a normalized JSON file
 5. Inspect the overview, 3D viewer, timeline, analytics, heatmaps, and raw data tabs
 
 ## Feature Support Labels
@@ -93,13 +89,15 @@ The support matrix is available inside the app and originates from `src/lib/pars
 - match metadata
 - map and playlist, when present in parser output
 - player and team identities
-- goals, assists, saves, shots
+- summary goals, assists, saves, shots
+- ball and car frame transforms
+- demolitions when exposed by the replay parser
 
 ### Derived from replay
 
 - timeline aggregation
-- ball and car interpolated transforms
-- speed
+- interpolated motion
+- speed metrics
 - aerial score
 - movement score
 - boost management score
@@ -107,8 +105,7 @@ The support matrix is available inside the app and originates from `src/lib/pars
 
 ### Inferred or estimated
 
-- touches when reconstructed from frame state
-- demos and bumps when only detectable from state transitions
+- timed goals, touches, shots, and saves when reconstructed from frame state
 - boost pickups
 - possessions
 - pressure windows
@@ -118,10 +115,11 @@ The support matrix is available inside the app and originates from `src/lib/pars
 - challenge score
 - rotation score
 
-### Unsupported in the scaffold
+### Unsupported in the current browser implementation
 
 - official Rocket League map and car assets
-- exact shot trajectory highlight reconstruction
+- exact shot trajectory reconstruction
+- reliable bump extraction from every replay variant
 
 ## Known Limitations of `.replay`-Only Browser Analysis
 

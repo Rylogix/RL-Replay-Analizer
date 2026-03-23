@@ -5,11 +5,7 @@ export interface WorkerParseRequest {
   file: File;
 }
 
-export interface WorkerDemoRequest {
-  type: 'LOAD_DEMO';
-}
-
-export type ReplayWorkerRequest = WorkerParseRequest | WorkerDemoRequest;
+export type ReplayWorkerRequest = WorkerParseRequest;
 
 export interface WorkerProgressMessage {
   type: 'PROGRESS';
@@ -28,4 +24,3 @@ export interface WorkerErrorMessage {
 }
 
 export type ReplayWorkerResponse = WorkerProgressMessage | WorkerSuccessMessage | WorkerErrorMessage;
-

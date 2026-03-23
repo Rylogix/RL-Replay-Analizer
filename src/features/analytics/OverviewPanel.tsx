@@ -1,5 +1,5 @@
 import { getStandoutPlayers } from '../../lib/analytics/selectors';
-import { formatClock, formatMetric } from '../../lib/utils/format';
+import { formatMetric } from '../../lib/utils/format';
 import type { NormalizedReplay } from '../../types/replay';
 import { Panel } from '../../components/Panel';
 
@@ -13,10 +13,6 @@ export const OverviewPanel = ({ replay }: { replay: NormalizedReplay }) => {
           <div className="stat-card">
             <span>Score</span>
             <strong>{replay.meta.finalScore.blue} - {replay.meta.finalScore.orange}</strong>
-          </div>
-          <div className="stat-card">
-            <span>Duration</span>
-            <strong>{formatClock(replay.meta.durationSeconds)}</strong>
           </div>
           <div className="stat-card">
             <span>Playlist</span>
@@ -47,4 +43,3 @@ export const OverviewPanel = ({ replay }: { replay: NormalizedReplay }) => {
     </div>
   );
 };
-

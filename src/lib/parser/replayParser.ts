@@ -42,7 +42,7 @@ export const parseReplayArrayBuffer = async (input: ParseReplayInput): Promise<N
     [
       `No browser parser adapter could parse "${input.fileName}".`,
       'The installed browser parser rejected the replay data or returned an unsupported shape.',
-      'Use the demo session or import previously exported normalized JSON if this replay variant is not yet handled.'
+      'Import previously exported normalized JSON if this replay variant is not yet handled.'
     ].join(' '),
   );
 };

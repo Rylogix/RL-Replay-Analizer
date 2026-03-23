@@ -1,14 +1,3 @@
-# Sample Data
+`ReplayForge` keeps `src/sample-data/mockReplay.ts` as a local mock fixture for tests and UI regression work.
 
-`ReplayForge` ships with an in-app demo session generated from `src/sample-data/mockReplay.ts`.
-
-Use it to validate:
-
-- dashboard layout
-- timeline behavior
-- 3D viewport playback
-- heatmaps
-- raw-data export/import
-
-When a browser-compatible `.replay` parser is wired into the worker adapter, exported normalized JSON files can also live in this folder for regression testing.
-
+It is not exposed as an in-app demo session anymore.

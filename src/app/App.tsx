@@ -56,6 +56,11 @@ export const App = () => {
         return;
       }
 
+      const viewerLockElement = document.pointerLockElement;
+      if (viewerLockElement instanceof HTMLElement && viewerLockElement.dataset.replayforgeViewer === 'true') {
+        return;
+      }
+
       if (event.code === 'Space') {
         event.preventDefault();
         togglePlayback();
@@ -86,4 +91,3 @@ export const App = () => {
 
   return <HomePage />;
 };
-

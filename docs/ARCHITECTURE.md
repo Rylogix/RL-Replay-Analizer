@@ -2,10 +2,10 @@
 
 ## Goals
 
-- Deploy as a static site on GitHub Pages
-- Keep all replay parsing, normalization, analytics, rendering, and persistence in the browser
-- Avoid server APIs, backend workers, databases, authentication, and cloud storage
-- Support local file upload, IndexedDB caching, JSON export/import, and a worker-based parse pipeline
+- deploy as a static site on GitHub Pages
+- keep parsing, normalization, analytics, rendering, and persistence in the browser
+- avoid server APIs, backend workers, databases, authentication, and cloud storage
+- support local file upload, IndexedDB caching, JSON export/import, and a worker-based parse pipeline
 
 ## Runtime Architecture
 
@@ -13,8 +13,8 @@
 2. The UI sends the file to `src/workers/replayWorker.ts`.
 3. The worker hashes the file, parses it through the `rl-replay-subtr-actor` WASM adapter in `src/lib/parser/replayParser.ts`, normalizes the output, computes analytics, and builds timeline events.
 4. The main thread stores the resulting normalized session in IndexedDB through `src/lib/storage/db.ts`.
-5. Zustand state in `src/app/store.ts` drives the dashboard, viewer playback, timeline filters, event feed, and tab panels.
-6. React Three Fiber renders a proxy arena and synchronized car/ball motion using interpolated frame data.
+5. Zustand state in `src/app/store.ts` drives the dashboard, viewer playback, timeline filters, and tab panels.
+6. React Three Fiber renders a proxy arena and synchronized car and ball motion using interpolated frame data.
 7. Charts, heatmaps, raw data inspection, and export/import run entirely client-side.
 
 ## Parser Strategy
@@ -24,7 +24,6 @@
   - `rl-replay-subtr-actor` browser WASM parser
   - ndarray/meta normalization into stable ReplayForge schemas
   - normalized JSON import path
-  - in-app demo replay for UI development and regression checks
 - Current limitation:
   - direct summary stats and frame motion are available
   - several timed event layers still need inference because the exposed parser output is richer for state than for event logs
@@ -37,7 +36,6 @@
 
 - Left rail: overview cards and summary panels
 - Center: 3D proxy arena viewer plus playback controls
-- Right rail: synchronized event feed
 - Bottom: timeline scrubber with filters and event markers
 - Tabs:
   - Overview
@@ -64,7 +62,6 @@
 │  │  ├─ App.tsx
 │  │  └─ store.ts
 │  ├─ components/
-│  │  ├─ EventFeed.tsx
 │  │  ├─ LoadingOverlay.tsx
 │  │  ├─ Panel.tsx
 │  │  ├─ SupportBadge.tsx
@@ -97,7 +94,8 @@
 │  │  │  ├─ normalize.test.ts
 │  │  │  ├─ normalize.ts
 │  │  │  ├─ replayParser.ts
-│  │  │  └─ replayWorkerClient.ts
+│  │  │  ├─ replayWorkerClient.ts
+│  │  │  └─ subtrActorAdapter.ts
 │  │  ├─ storage/
 │  │  │  ├─ db.ts
 │  │  │  └─ replayCache.ts
@@ -105,7 +103,8 @@
 │  │     ├─ field.ts
 │  │     ├─ format.ts
 │  │     ├─ hash.ts
-│  │     └─ math.ts
+│  │     ├─ math.ts
+│  │     └─ replayTitle.ts
 │  ├─ pages/
 │  │  └─ HomePage.tsx
 │  ├─ sample-data/
@@ -130,12 +129,12 @@
 ## GitHub Pages Fit
 
 - `vite.config.ts` uses `base: './'` for relative asset loading
-- No SSR, server routes, API handlers, or backend storage
-- Browser-only worker and IndexedDB persistence
+- no SSR, server routes, API handlers, or backend storage
+- browser-only worker and IndexedDB persistence
 - GitHub Actions workflow builds the static bundle and deploys `dist/`
 
 ## Known Limitations of `.replay`-Only Browser Analysis
 
-- Some advanced events such as bumps, boost pickups, possessions, pressure windows, and challenge context are often inferred rather than directly present in replay payloads.
-- Official Rocket League assets are not bundled; the 3D viewport uses proxy geometry.
-- Custom analytics are transparent heuristics derived from replay state and should never be presented as official Psyonix stats.
+- some advanced events such as bumps, boost pickups, possessions, pressure windows, and challenge context are often inferred rather than directly present in replay payloads
+- official Rocket League assets are not bundled, so the 3D viewport uses proxy geometry
+- custom analytics are transparent heuristics derived from replay state and should never be presented as official Psyonix stats

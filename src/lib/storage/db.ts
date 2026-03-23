@@ -1,5 +1,6 @@
 import { openDB } from 'idb';
 import type { NormalizedReplay } from '../../types/replay';
+import { getReplayTitle } from '../utils/replayTitle';
 
 const DB_NAME = 'replayforge-db';
 const STORE_NAME = 'sessions';
@@ -23,7 +24,7 @@ export const replayDb = {
     const db = await dbPromise;
     const record: StoredReplaySession = {
       replayHash: replay.replayHash,
-      title: replay.meta.title,
+      title: getReplayTitle(replay),
       updatedAt: new Date().toISOString(),
       replay
     };
@@ -42,4 +43,3 @@ export const replayDb = {
     return db.delete(STORE_NAME, replayHash);
   }
 };
-

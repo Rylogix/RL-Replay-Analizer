@@ -35,7 +35,6 @@ interface ReplayForgeState {
   error: string | null;
   eventFilters: Record<ReplayEventType, boolean>;
   hydrateSessions: () => Promise<void>;
-  loadDemo: () => Promise<void>;
   parseFile: (file: File) => Promise<void>;
   openSession: (replayHash: string) => Promise<void>;
   deleteSession: (replayHash: string) => Promise<void>;
@@ -70,7 +69,7 @@ export const useReplayForgeStore = create<ReplayForgeState>((set, get) => ({
   sessions: [],
   selectedTab: 'overview',
   selectedPlayerId: null,
-  cameraMode: 'tactical',
+  cameraMode: 'free',
   currentTime: 0,
   isPlaying: false,
   playbackSpeed: 1,
@@ -82,24 +81,6 @@ export const useReplayForgeStore = create<ReplayForgeState>((set, get) => ({
   hydrateSessions: async () => {
     const sessions = await listCachedSessions();
     set({ sessions });
-  },
-  loadDemo: async () => {
-    set({ loading: true, parseProgress: 0, parseMessage: 'Loading demo replay', error: null });
-    try {
-      const replay = await getReplayWorkerClient().run(
-        { type: 'LOAD_DEMO' },
-        (progress, message) => set({ parseProgress: progress, parseMessage: message }),
-      );
-      await cacheReplaySession(replay);
-      const sessions = await listCachedSessions();
-      applyReplay(replay, set);
-      set({ sessions });
-    } catch (error) {
-      set({
-        loading: false,
-        error: error instanceof Error ? error.message : 'Unable to load demo session'
-      });
-    }
   },
   parseFile: async (file) => {
     set({ loading: true, parseProgress: 0, parseMessage: `Parsing ${file.name}`, error: null });
@@ -173,4 +154,3 @@ export const useReplayForgeStore = create<ReplayForgeState>((set, get) => ({
       }
     })
 }));
-

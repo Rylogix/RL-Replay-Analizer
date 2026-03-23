@@ -1,4 +1,5 @@
 import type { NormalizedReplay } from '../../types/replay';
+import { getReplayTitle } from '../utils/replayTitle';
 import { replayDb } from './db';
 
 export const cacheReplaySession = async (replay: NormalizedReplay) => {
@@ -15,8 +16,7 @@ export const exportReplaySession = (replay: NormalizedReplay) => {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = `${replay.meta.title.replace(/\s+/g, '-').toLowerCase()}.json`;
+  anchor.download = `${getReplayTitle(replay).replace(/\s+/g, '-').toLowerCase()}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
 };
-

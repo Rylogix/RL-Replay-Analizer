@@ -20,6 +20,7 @@ import type {
   Vector3,
 } from '../../types/replay';
 import { FIELD_DIMENSIONS } from '../utils/field';
+import { buildReplayTitle } from '../utils/replayTitle';
 import { clamp, magnitude } from '../utils/math';
 import type { BrowserReplayAdapter } from './replayParser';
 
@@ -94,6 +95,26 @@ const titleCaseMapName = (mapName: string) =>
   mapName
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const detectPerspectiveTeamId = (
+  headers: Record<string, unknown>,
+  players: ParsedPlayerSource[],
+) => {
+  const preferredHeaderKeys = ['PlayerName', 'PlayerID', 'PrimaryPlayer', 'ClientName', 'OwnerName'];
+  const matchingHeader = preferredHeaderKeys
+    .map((key) => headers[key])
+    .find((value) => typeof value === 'string' && value.trim().length);
+
+  if (typeof matchingHeader === 'string') {
+    const normalizedName = matchingHeader.trim().toLowerCase();
+    const matchedPlayer = players.find((entry) => entry.player.name.toLowerCase() === normalizedName);
+    if (matchedPlayer) {
+      return matchedPlayer.player.teamId;
+    }
+  }
+
+  return null;
+};
 
 const parseDateHeader = (raw: string | undefined) => {
   if (!raw) {
@@ -620,6 +641,8 @@ export const subtrActorReplayAdapter: BrowserReplayAdapter = {
     const pressureWindows = buildPressureWindows(possessions, playersById);
 
     const durationSeconds = frames.at(-1)?.time ?? Number(allHeaders.TotalSecondsPlayed ?? 0);
+    const recordedAt = parseDateHeader(String(allHeaders.Date ?? ''));
+    const perspectiveTeamId = detectPerspectiveTeamId(allHeaders, parsedPlayers);
 
     return {
       schemaVersion: '1.0.0',
@@ -637,12 +660,22 @@ export const subtrActorReplayAdapter: BrowserReplayAdapter = {
       },
       meta: {
         id: String(allHeaders.Id ?? input.fileName),
-        title: `${titleCaseMapName(String(allHeaders.MapName ?? 'Rocket League Match'))} • ${input.fileName.replace(/\.replay$/i, '')}`,
+        title: buildReplayTitle(
+          {
+            finalScore: {
+              blue: teams[0].score,
+              orange: teams[1].score,
+            },
+            recordedAt,
+          },
+          teams,
+          perspectiveTeamId,
+        ),
         mapName: titleCaseMapName(String(allHeaders.MapName ?? 'Unknown Arena')),
         playlist: `${String(allHeaders.MatchType ?? 'Replay')} ${Number(allHeaders.TeamSize ?? 0)}v${Number(allHeaders.TeamSize ?? 0)}`,
         durationSeconds,
         frameRate: DEFAULT_FPS,
-        recordedAt: parseDateHeader(String(allHeaders.Date ?? '')),
+        recordedAt,
         overtime: durationSeconds > 300,
         overtimeSeconds: durationSeconds > 300 ? durationSeconds - 300 : 0,
         finalScore: {

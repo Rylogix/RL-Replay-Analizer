@@ -2,7 +2,6 @@
 
 import { parseImportedJson, parseReplayArrayBuffer } from '../lib/parser/replayParser';
 import { sha256Hex } from '../lib/utils/hash';
-import { createMockReplay } from '../sample-data/mockReplay';
 import type { NormalizedReplay } from '../types/replay';
 import type { ReplayWorkerRequest, ReplayWorkerResponse } from './messages';
 
@@ -17,13 +16,6 @@ const parseJsonFile = async (file: File): Promise<NormalizedReplay> => {
 
 ctx.onmessage = async (event: MessageEvent<ReplayWorkerRequest>) => {
   try {
-    if (event.data.type === 'LOAD_DEMO') {
-      emit({ type: 'PROGRESS', progress: 15, message: 'Generating demo replay session' });
-      const replay = createMockReplay();
-      emit({ type: 'SUCCESS', replay });
-      return;
-    }
-
     const { file } = event.data;
     emit({ type: 'PROGRESS', progress: 10, message: `Reading ${file.name}` });
 
@@ -58,4 +50,3 @@ ctx.onmessage = async (event: MessageEvent<ReplayWorkerRequest>) => {
     });
   }
 };
-

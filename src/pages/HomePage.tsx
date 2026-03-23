@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { UploadPanel } from '../features/upload/UploadPanel';
 import { TimelineBar } from '../features/timeline/TimelineBar';
-import { EventFeed } from '../components/EventFeed';
 import { Tabs } from '../components/Tabs';
 import { LoadingOverlay } from '../components/LoadingOverlay';
 import { OverviewPanel } from '../features/analytics/OverviewPanel';
@@ -43,7 +42,6 @@ export const HomePage = () => {
     error,
     eventFilters,
     parseFile,
-    loadDemo,
     openSession,
     deleteSession,
     exportCurrentReplay,
@@ -64,7 +62,7 @@ export const HomePage = () => {
         <header className="hero">
           <div>
             <p className="eyebrow">ReplayForge</p>
-            <h1>Rocket League replay analysis that stays in the browser</h1>
+            <h1>Rocket League replay analysis</h1>
             <p>
               Upload a local `.replay`, parse it in a Web Worker, cache normalized sessions in IndexedDB,
               and inspect custom analytics, 3D playback, timelines, heatmaps, and raw data without a backend.
@@ -75,7 +73,6 @@ export const HomePage = () => {
         <UploadPanel
           sessions={sessions}
           onFileSelected={parseFile}
-          onLoadDemo={loadDemo}
           onExport={exportCurrentReplay}
           onOpenSession={openSession}
           onDeleteSession={deleteSession}
@@ -85,8 +82,8 @@ export const HomePage = () => {
         {!replay ? (
           <Panel title="Empty State" subtitle="No replay loaded yet" className="empty-state">
             <p>
-              Start with the demo session, import a previously exported normalized JSON file, or upload a local
-              `.replay`. Parsing stays in the browser; unsupported analytics remain labeled explicitly inside the app.
+              Upload a local `.replay` or import a previously exported normalized JSON file. Parsing stays in the
+              browser, and unsupported analytics remain labeled explicitly inside the app.
             </p>
           </Panel>
         ) : (
@@ -108,12 +105,10 @@ export const HomePage = () => {
                     onSetPlaybackSpeed={setPlaybackSpeed}
                     playbackSpeed={playbackSpeed}
                     onSetCameraMode={setCameraMode}
+                    onSelectPlayer={setSelectedPlayerId}
                   />
                 </Suspense>
               </section>
-              <aside className="workspace-grid__right">
-                <EventFeed replay={replay} currentTime={currentTime} onSeek={seek} />
-              </aside>
             </section>
 
             <section className="tabs-shell">
