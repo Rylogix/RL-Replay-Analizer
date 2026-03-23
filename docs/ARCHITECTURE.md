@@ -11,7 +11,7 @@
 
 1. The user uploads a local `.replay` or normalized `.json` file from the browser.
 2. The UI sends the file to `src/workers/replayWorker.ts`.
-3. The worker hashes the file, attempts replay parsing through `src/lib/parser/replayParser.ts`, normalizes the output, computes analytics, and builds timeline events.
+3. The worker hashes the file, parses it through the `rl-replay-subtr-actor` WASM adapter in `src/lib/parser/replayParser.ts`, normalizes the output, computes analytics, and builds timeline events.
 4. The main thread stores the resulting normalized session in IndexedDB through `src/lib/storage/db.ts`.
 5. Zustand state in `src/app/store.ts` drives the dashboard, viewer playback, timeline filters, event feed, and tab panels.
 6. React Three Fiber renders a proxy arena and synchronized car/ball motion using interpolated frame data.
@@ -19,16 +19,15 @@
 
 ## Parser Strategy
 
-- Current scaffold:
+- Current implementation:
   - Web Worker transport and progress messaging
-  - parser adapter boundary for browser-runnable replay parsing
+  - `rl-replay-subtr-actor` browser WASM parser
+  - ndarray/meta normalization into stable ReplayForge schemas
   - normalized JSON import path
-  - in-app demo replay for UI development and GitHub Pages validation
-- Intended production parser path:
-  - Compile a Rocket League replay parser to WASM
-  - Wrap it behind `BrowserReplayAdapter`
-  - Emit raw parser output into ReplayForge normalized schemas
-  - Keep heavy decode and analytics inside workers
+  - in-app demo replay for UI development and regression checks
+- Current limitation:
+  - direct summary stats and frame motion are available
+  - several timed event layers still need inference because the exposed parser output is richer for state than for event logs
 
 ## Data Flow
 
@@ -137,8 +136,6 @@
 
 ## Known Limitations of `.replay`-Only Browser Analysis
 
-- Browser-only replay parsing depends on a WASM-compatible parser that is not wired in this scaffold yet.
 - Some advanced events such as bumps, boost pickups, possessions, pressure windows, and challenge context are often inferred rather than directly present in replay payloads.
 - Official Rocket League assets are not bundled; the 3D viewport uses proxy geometry.
 - Custom analytics are transparent heuristics derived from replay state and should never be presented as official Psyonix stats.
-

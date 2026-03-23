@@ -85,8 +85,8 @@ export const HomePage = () => {
         {!replay ? (
           <Panel title="Empty State" subtitle="No replay loaded yet" className="empty-state">
             <p>
-              Start with the demo session to validate the UI on GitHub Pages, or import a previously exported
-              normalized JSON file. The `.replay` worker adapter boundary is ready for a browser-runnable WASM parser.
+              Start with the demo session, import a previously exported normalized JSON file, or upload a local
+              `.replay`. Parsing stays in the browser; unsupported analytics remain labeled explicitly inside the app.
             </p>
           </Panel>
         ) : (

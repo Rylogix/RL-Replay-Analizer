@@ -1,5 +1,6 @@
 import type { NormalizedReplay } from '../../types/replay';
 import { normalizeReplay } from './normalize';
+import { subtrActorReplayAdapter } from './subtrActorAdapter';
 
 export class ParserIntegrationError extends Error {
   constructor(message: string) {
@@ -19,14 +20,7 @@ export interface BrowserReplayAdapter {
   parse(input: ParseReplayInput): Promise<NormalizedReplay | null>;
 }
 
-const browserWasmPlaceholderAdapter: BrowserReplayAdapter = {
-  id: 'wasm-adapter-placeholder',
-  async parse() {
-    return null;
-  }
-};
-
-const adapters: BrowserReplayAdapter[] = [browserWasmPlaceholderAdapter];
+const adapters: BrowserReplayAdapter[] = [subtrActorReplayAdapter];
 
 export const parseImportedJson = (payload: unknown): NormalizedReplay => {
   if (!payload || typeof payload !== 'object' || !('meta' in payload)) {
@@ -47,9 +41,8 @@ export const parseReplayArrayBuffer = async (input: ParseReplayInput): Promise<N
   throw new ParserIntegrationError(
     [
       `No browser parser adapter could parse "${input.fileName}".`,
-      'ReplayForge is scaffolded for GitHub Pages and expects a browser-runnable WASM parser to be wired here.',
-      'Use the demo session or import previously exported normalized JSON until the replay adapter is implemented.'
+      'The installed browser parser rejected the replay data or returned an unsupported shape.',
+      'Use the demo session or import previously exported normalized JSON if this replay variant is not yet handled.'
     ].join(' '),
   );
 };
-

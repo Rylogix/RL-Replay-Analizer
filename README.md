@@ -21,16 +21,12 @@ ReplayForge already includes:
 
 - a worker message protocol
 - a parser adapter abstraction in `src/lib/parser/replayParser.ts`
+- a browser-loaded WASM parser integration using `rl-replay-subtr-actor`
 - normalized schema and analytics layers that do not depend on parser internals
 - JSON import/export for offline persistence and debugging
 - a demo replay session for UI development before a browser parser is connected
 
-To complete `.replay` parsing in production:
-
-1. Compile a Rocket League replay parser to browser-safe WASM.
-2. Wrap it in a `BrowserReplayAdapter`.
-3. Convert raw parser output to ReplayForge normalized schemas.
-4. Keep parsing and heavy analytics inside Web Workers.
+Current `.replay` support uses a browser-loaded WASM adapter and then normalizes its ndarray/meta output into ReplayForge’s schema. Direct replay summary stats are available, while some timed event layers still rely on transparent inference from frame state.
 
 ## Local Development
 
@@ -124,7 +120,6 @@ The support matrix is available inside the app and originates from `src/lib/pars
 
 ### Unsupported in the scaffold
 
-- live `.replay` parsing until a browser-safe WASM parser is connected
 - official Rocket League map and car assets
 - exact shot trajectory highlight reconstruction
 
@@ -132,7 +127,7 @@ The support matrix is available inside the app and originates from `src/lib/pars
 
 - Replay files do not inherently expose every high-level coaching concept. Several requested metrics require transparent inference rules.
 - Browser memory and CPU ceilings are lower than a native desktop parser, so very large replays may require chunked worker processing and more aggressive sampling.
-- Cross-platform replay parser availability in the browser is the main implementation dependency. The UI, storage, worker protocol, and analytics layers are ready for that integration, but the adapter itself is still a placeholder in this scaffold.
+- Some timed event layers are reconstructed from replay state because the browser parser currently exposes stronger summary/frame data than rich event timelines.
 
 ## Architecture and File Tree
 

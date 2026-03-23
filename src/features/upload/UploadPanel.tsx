@@ -58,7 +58,7 @@ export const UploadPanel = ({
       />
 
       <div className="upload-panel__notes">
-        <p>`.replay` parsing is designed to stay local in a Web Worker. This scaffold currently includes the worker and adapter boundary, plus demo/import flows for browser-only validation.</p>
+        <p>`.replay` parsing runs locally in a Web Worker via a browser-loaded WASM parser. Some advanced event timings are still inferred from replay state and direct summary stats.</p>
         {error ? <p className="upload-panel__error">{error}</p> : null}
       </div>
 
@@ -91,4 +91,3 @@ export const UploadPanel = ({
     </Panel>
   );
 };
-
